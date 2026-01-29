@@ -37,17 +37,20 @@ export default {
       errorMessage: ""
     };
   },
-  methods: {
+   methods: {
     async submitForm() {
-      const scriptURL = "https://script.google.com/macros/s/AKfycbw4ciod9W03CiYzqZzxZ0KotjU3Q85QgNuXXhOxQCSREIIYUORhQwrkAaBrfHF9ddqHYw/exec"; // replace with your actual URL
+      const scriptURL = "https://script.google.com/macros/s/AKfycbzwVDW9mSCnzKa9WWFh2X3SqY0dHXalJvoN49fXYM-KdkSOlcRmUKzK8CmwJyF-yYek/exec"; // Replace with your Apps Script URL
+      const formData = new FormData();
+      formData.append("name", this.form.name);
+      formData.append("email", this.form.email);
+      formData.append("phone", this.form.phone);
+      formData.append("message", this.form.message);
+
+      this.successMessage = "";
+      this.errorMessage = "";
 
       try {
-        const response = await fetch(scriptURL, {
-          method: "POST",
-          body: JSON.stringify(this.form),
-          headers: { "Content-Type": "application/json" }
-        });
-
+        const response = await fetch(scriptURL, { method: "POST", body: formData });
         const result = await response.json();
 
         if (result.result === "success") {
@@ -55,9 +58,11 @@ export default {
           this.form = { name: "", email: "", phone: "", message: "" };
         } else {
           this.errorMessage = "Something went wrong. Please try again.";
+          console.error(result);
         }
       } catch (err) {
         this.errorMessage = "Unable to connect. Please check your network.";
+        console.error(err);
       }
     }
   }
